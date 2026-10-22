@@ -2202,3 +2202,29 @@ textarea:focus-visible {
     gap: 12px;
   }
 }
+/* Better keyboard accessibility for dashboard cards */
+.metric-card:focus-visible {
+  outline: 2px solid #087f77;
+  outline-offset: 3px;
+}
+
+/* Smooth hover effect */
+.metric-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .metric-card {
+    transition: none;
+  }
+
+  .metric-card:hover {
+    transform: none;
+  }
+}
