@@ -2162,3 +2162,43 @@ textarea:focus-visible {
     transition-duration: .01ms !important;
   }
 }
+/* Complaint status badges */
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-in-progress {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-resolved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Dashboard card hover effect */
+.metric-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+.metric-card:focus-visible {
+  outline: 2px solid #087f77;
+  outline-offset: 3px;
+}
+
+.metrics-grid {
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .metrics-grid {
+    gap: 12px;
+  }
+}

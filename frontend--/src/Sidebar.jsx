@@ -3,7 +3,7 @@ import "./Sidebar.css"
 
 const navigationItems = [
   { label: 'Dashboard', icon: 'grid' },
-  { label: 'All Complaints', icon: 'clipboard' },
+  { label: 'All Complaints', icon: 'clipboard', count:12 },
   { label: 'Incident Clusters', icon: 'layers' },
   { label: 'Issue Map', icon: 'map' },
   { label: 'Resource Allocation', icon: 'users' },
@@ -32,6 +32,9 @@ export default function Sidebar({ activeSection, onNavigate, collapsed, onToggle
           >
             <Icon name={item.icon} size={19} />
             {!collapsed && <span>{item.label}</span>}
+            {!collapsed && item.count != null && (
+            <span className="nav-count">{item.count}</span>
+            )}
           </button>
         ))}
       </nav>
