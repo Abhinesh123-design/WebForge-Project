@@ -1076,11 +1076,14 @@ textarea:focus-visible {
   font-size: 11px;
 }
 
+
 .map-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(230px, .75fr);
-  gap: 15px;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+  gap: 20px;
+  align-items: stretch;
 }
+
 
 .map-placeholder {
   position: relative;
@@ -2228,3 +2231,4 @@ textarea:focus-visible {
     transform: none;
   }
 }
+
