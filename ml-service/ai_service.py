@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import DBSCAN
 
 
-app = FastAPI(title="CivicSense AI Service", version="2.1")
+app = FastAPI(title="CivicSense AI Service" , version="2.1")
 
 
 # =========================================================
