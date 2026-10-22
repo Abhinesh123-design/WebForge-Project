@@ -176,3 +176,17 @@
 .sidebar-collapsed ~ .workspace {
   margin-left: 76px;
 }
+.nav-count {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 12px;
+  background: #087f77;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}

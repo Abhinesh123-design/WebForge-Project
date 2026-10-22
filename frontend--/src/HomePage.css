@@ -2090,3 +2090,18 @@ textarea:focus-visible {
     transition-duration: .01ms !important;
   }
 }
+/* Complaint status badges */
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-in-progress {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-resolved {
+  background: #d1fae5;
+  color: #065f46;
+}
