@@ -52,7 +52,7 @@ textarea:focus-visible {
   min-height: 100vh;
 }
 
-.sidebar {
+/* .sidebar {
   position: fixed;
   z-index: 5;
   inset: 0 auto 0 0;
@@ -229,7 +229,7 @@ textarea:focus-visible {
 
 .sidebar-collapsed ~ .workspace {
   margin-left: 76px;
-}
+} */
 
 .topbar {
   position: sticky;
