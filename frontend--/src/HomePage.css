@@ -2166,20 +2166,40 @@ textarea:focus-visible {
   }
 }
 /* Complaint status badges */
+
 .status-pending {
   background: #fef3c7;
   color: #92400e;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
 }
 
 .status-in-progress {
   background: #dbeafe;
   color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
 }
 
 .status-resolved {
   background: #d1fae5;
   color: #065f46;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
 }
+
 
 /* Dashboard card hover effect */
 .metric-card {
