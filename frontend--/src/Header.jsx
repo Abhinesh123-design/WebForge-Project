@@ -1,16 +1,5 @@
 import Icon from "./Icon.jsx"
 import "./Header.css"
-import {
-  categories,
-  complaintStatuses,
-  initialClusters,
-  initialComplaints,
-  initialResourceRecommendations,
-  recurringHotspots,
-  sampleInsights,
-  severityPriorityScores,
-  teams,
-} from './data/sampleData.js'
 
 export default function Header({ activeSection, searchQuery, onSearchChange, onReport, notificationsOpen, onToggleNotifications, notificationCount }) {
   const title = activeSection === 'Incident Details' ? 'Incident details' : activeSection
@@ -29,7 +18,7 @@ export default function Header({ activeSection, searchQuery, onSearchChange, onR
           <input
             type="search"
             value={searchQuery}
-            onChange={(event) => {console.log("typed : " , event.target.value); onSearchChange(event.target.value)}}
+            onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search complaints, locations..."
           />
           <kbd>⌘ K</kbd>
@@ -56,6 +45,10 @@ export default function Header({ activeSection, searchQuery, onSearchChange, onR
           <span className="avatar" aria-hidden="true">AD</span>
           <span><strong>Alex Morgan</strong><small>Administrator</small></span>
         </div>
+        <nav className="auth-nav" aria-label="Account">
+          <a className="auth-nav-login" href="/login">Log in</a>
+          <a className="auth-nav-signup" href="/signup">Sign up</a>
+        </nav>
         <button className="button button-primary top-report-button" type="button" onClick={onReport}>
           <Icon name="plus" size={17} />
           Report new issue

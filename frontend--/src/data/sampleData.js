@@ -1,15 +1,14 @@
 export const categories = [
   'Road Damage',
-  'Pothole / Road Damage',
   'Garbage',
-  'Garbage Accumulation',
+  'Electrical Hazard' ,
   'Water Leakage',
   'Streetlight',
-  'Broken Streetlight',
+  'Fire Hazard',
   'Other',
 ]
 
-export const complaintStatuses = ['Reported', 'Under Review', 'In Progress', 'Resolved']
+export const complaintStatuses = ['Pending','Assigned' ,'Rejected' , 'Under Review', 'In Progress', 'Resolved']
 
 export const severityPriorityScores = {
   Low: 35,
@@ -19,11 +18,12 @@ export const severityPriorityScores = {
 }
 
 export const teams = [
-  'Plumbing Team',
-  'Road Maintenance Team',
-  'Sanitation Team',
-  'Electrical Team',
-  'Civic Response Team',
+  'Electrical',
+  'Roads',
+  'Sanitation',
+  'Water Supply',
+  'Fire and Safety',
+  'Public Works',
 ]
 
 export const initialComplaints = [
@@ -37,7 +37,7 @@ export const initialComplaints = [
     severity: 'High',
     priorityScore: 92,
     status: 'Under Review',
-    submittedAt: '2026-10-20',
+    createdAt: '2026-10-20',
     priorityExplanation: 'Repeated reports and continuous water loss in a frequently used area.',
     priorityFactors: ['Repeated reports', 'Continuous water loss', 'High foot traffic'],
     recommendedAction: 'Assign the plumbing team for immediate inspection.',

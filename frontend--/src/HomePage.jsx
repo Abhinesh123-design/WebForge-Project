@@ -48,10 +48,6 @@ function PriorityBadge({ score }) {
   return <span className={`priority-badge priority-${priorityClass}`}>{label}</span>
 }
 
-
-
-
-
 function SummaryCard({ icon, label, value, note, tone, onClick }) {
   return (
     <button className={`metric-card metric-${tone}`} type="button" onClick={onClick}>
@@ -307,143 +303,6 @@ function IncidentDetails({ complaint, complaints, clusters, onStatusChange, onTe
   )
 }
 
-function IncidentClusters({ clusters, complaints, onViewDetails }) {
-  return (
-    <section className="page-section">
-      <div className="section-intro"><h2>Incident clusters</h2><p>Predefined demonstration groups; automated clustering is not implemented.</p></div>
-      <div className="cluster-grid">
-        {clusters.map((cluster) => {
-          const linkedComplaints = complaints.filter((item) => cluster.complaintIds.includes(item.id))
-          return (
-            <article className="panel cluster-card" key={cluster.id}>
-              <div className="cluster-header"><span className="cluster-icon"><Icon name="layers" /></span><span className="eyebrow">{cluster.id}</span><PriorityBadge score={cluster.priorityScore} /></div>
-              <h3>{cluster.title}</h3><p>{cluster.category} <span>·</span> {cluster.location}</p>
-              <p className="cluster-count">{linkedComplaints.length} related complaints</p>
-              <div className="linked-ids">{linkedComplaints.map((item) => <button type="button" key={item.id} onClick={() => onViewDetails(item.id)}>{item.id}</button>)}</div>
-              <p><strong>Suggested action</strong><br />{cluster.suggestedAction}</p>
-            </article>
-          )
-        })}
-      </div>
-    </section>
-  )
-}
-
-function IssueMap({ complaints, onViewDetails }) {
-  return (
-    <section className="page-section">
-      <div className="section-intro"><h2>Issue hotspots</h2><p>Sample coordinates are illustrative and do not represent verified real-world locations.</p></div>
-      <div className="map-layout">
-        <div className="panel map-placeholder">
-          <div className="map-placeholder-title"><Icon name="map" /><span>Interactive issue map</span></div>
-          <div className="map-streets" aria-hidden="true"><span /><span /><span /><span /></div>
-          <div className="map-pins">
-            {complaints.slice(0, 4).map((complaint, index) => (
-              <button
-                key={complaint.id}
-                className={`map-pin map-pin-${index + 1}`}
-                type="button"
-                onClick={() => onViewDetails(complaint.id)}
-                aria-label={`Open ${complaint.title}`}
-              >{index + 1}</button>
-            ))}
-          </div>
-          <p className="map-caption">Map integration placeholder · no map service connected</p>
-          <div className="map-legend"><span><i className="legend-high" />High priority</span><span><i className="legend-medium" />Medium</span><span><i className="legend-low" />Low</span></div>
-        </div>
-        <aside className="panel hotspots-panel"><SectionHeading title="Recurring hotspots" />
-          <ul className="hotspot-list">{recurringHotspots.map((hotspot) => (
-            <li key={hotspot.location}><span className="hotspot-marker"><Icon name="pin" size={16} /></span><span><strong>{hotspot.location}</strong><small>Demonstration area</small></span><b>{hotspot.reports}<small> reports</small></b></li>
-          ))}</ul>
-        </aside>
-      </div>
-      <section className="panel coordinates-panel"><SectionHeading title="Sample incident locations" />
-        <ul className="coordinate-list">{complaints.map((complaint) => (
-          <li key={complaint.id}><button type="button" onClick={() => onViewDetails(complaint.id)}>{complaint.id}</button><span className={`category-label category-${categoryColors[complaint.category] || 'slate'}`}>{complaint.category}</span><span>{complaint.location}</span><code>{complaint.coordinates.latitude}, {complaint.coordinates.longitude}</code></li>
-        ))}</ul>
-      </section>
-    </section>
-  )
-}
-
-function ResourceAllocation({ recommendations, onAssign, onTeamSelect }) {
-  return (
-    <section className="page-section">
-      <div className="section-intro"><h2>Resource allocation</h2><p>Review suggested teams and assign available resources to priority issues.</p></div>
-      <div className="recommendation-list">
-        {recommendations.map((recommendation) => (
-          <article className="panel recommendation-card" key={recommendation.incidentId}>
-            <div className="recommendation-main">
-              <p className="eyebrow">INCIDENT {recommendation.incidentId}</p><h3>{recommendation.title}</h3>
-              <p>{recommendation.reason}</p><div className="resource-line"><strong>Suggested resources</strong><span>{recommendation.resources}</span></div>
-            </div>
-            <div className="recommendation-controls">
-              <label className="form-field"><span>Recommended team</span>
-                <select value={recommendation.recommendedTeam} onChange={(event) => onTeamSelect(recommendation.incidentId, event.target.value)}>
-                  {teams.map((team) => <option key={team} value={team}>{team}</option>)}
-                </select>
-              </label>
-              <span className={`assignment-status ${recommendation.assignmentStatus === 'Assigned' ? 'assignment-done' : ''}`}>{recommendation.assignmentStatus}</span>
-              <button className="button button-primary" type="button" onClick={() => onAssign(recommendation.incidentId)} disabled={recommendation.assignmentStatus === 'Assigned'}>
-                {recommendation.assignmentStatus === 'Assigned' ? 'Team assigned' : 'Assign team'}
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function Analytics({ complaints }) {
-  const countBy = (getKey) => complaints.reduce((counts, complaint) => {
-    const key = getKey(complaint)
-    counts[key] = (counts[key] || 0) + 1
-    return counts
-  }, {})
-  const categoryCounts = countBy((complaint) => complaint.category)
-  const statusCounts = countBy((complaint) => complaint.status)
-  const priorityCounts = {
-    High: complaints.filter((item) => item.priorityScore >= 80).length,
-    'Medium / Low': complaints.filter((item) => item.priorityScore < 80).length,
-  }
-  const resolvedCount = statusCounts.Resolved || 0
-  const resolutionRate = complaints.length ? Math.round((resolvedCount / complaints.length) * 100) : 0
-  const trendCounts = countBy((complaint) => complaint.submittedAt.slice(0, 7))
-  const recurringLocations = Object.entries(countBy((complaint) => complaint.location)).filter(([, count]) => count > 1)
-
-  return (
-    <section className="page-section analytics-page">
-      <div className="section-intro"><h2>Analytics</h2><p>Statistics are calculated from the current sample complaints and are illustrative only.</p></div>
-      <div className="analytics-highlight panel"><span className="metric-icon icon-teal"><Icon name="chart" /></span><div><small>Resolution rate</small><strong>{resolutionRate}%</strong><p>{resolvedCount} of {complaints.length} complaints resolved</p></div></div>
-      <div className="analytics-grid">
-        <AnalyticsCard title="Complaints by category" counts={categoryCounts} />
-        <AnalyticsCard title="Complaints by status" counts={statusCounts} />
-        <AnalyticsCard title="Priority distribution" counts={priorityCounts} />
-        <AnalyticsCard title="Reports over time" counts={trendCounts} />
-        <article className="panel analytics-card"><h3>Recurring hotspots</h3>
-          {recurringLocations.length ? <CountList counts={Object.fromEntries(recurringLocations)} /> : <p className="muted">No repeated locations in current complaints.</p>}
-          <p className="muted">Additional hotspot figures are predefined demonstration data.</p>
-        </article>
-      </div>
-    </section>
-  )
-}
-
-function AnalyticsCard({ title, counts }) {
-  return <article className="panel analytics-card"><h3>{title}</h3><CountList counts={counts} /></article>
-}
-
-function CountList({ counts }) {
-  const entries = Object.entries(counts)
-  const maxCount = Math.max(1, ...entries.map(([, count]) => count))
-  return entries.length ? (
-    <ul className="analytics-counts">{entries.map(([label, count]) => (
-      <li key={label}><div className="analytics-count-label"><span>{label}</span><strong>{count}</strong></div><span className="analytics-track"><span style={{ width: `${(count / maxCount) * 100}%` }} /></span></li>
-    ))}</ul>
-  ) : <p className="muted">No complaints to summarize.</p>
-}
-
 function Insights({ onReview }) {
   return (
     <section className="panel insights-panel">
@@ -464,6 +323,57 @@ function Settings() {
   return <section className="panel settings-panel"><span className="metric-icon icon-teal"><Icon name="settings" /></span><h2>Settings</h2><p>Administrative preferences can be added here in a future iteration.</p></section>
 }
 
+function ReportAccessPrompt({ onClose }) {
+  const closeButtonRef = useRef(null)
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') onClose()
+    }
+
+    closeButtonRef.current?.focus()
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
+  return (
+    <div
+      className="access-modal-backdrop"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
+    >
+      <section
+        className="access-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-access-title"
+        aria-describedby="report-access-description"
+      >
+        <button
+          className="icon-button access-modal-close"
+          type="button"
+          onClick={onClose}
+          ref={closeButtonRef}
+          aria-label="Close login prompt"
+        >
+          <Icon name="close" />
+        </button>
+        <span className="access-modal-icon"><Icon name="users" size={22} /></span>
+        <p className="eyebrow">COMMUNITY REPORTING</p>
+        <h2 id="report-access-title">Sign in to report an issue</h2>
+        <p id="report-access-description">Please log in or sign up to report a civic issue.</p>
+        <div className="access-modal-actions">
+          <a className="button button-secondary" href="/login">Log In</a>
+          <a className="button button-primary" href="/signup">Sign Up</a>
+        </div>
+        <p className="access-modal-note">Authentication is not connected yet. Reporting remains unavailable until sign-in can be verified.</p>
+      </section>
+    </div>
+  )
+}
+
 function HomePage() {
   const [complaints, setComplaints] = useState(initialComplaints)
   const [recommendations, setRecommendations] = useState(initialResourceRecommendations)
@@ -472,6 +382,7 @@ function HomePage() {
   const [filters, setFilters] = useState({ category: '', priority: '', status: '' })
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [showComplaintForm, setShowComplaintForm] = useState(false)
+  const [showReportAccessPrompt, setShowReportAccessPrompt] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [selectedComplaintId, setSelectedComplaintId] = useState('')
   const [previousSection, setPreviousSection] = useState('Dashboard')
@@ -543,21 +454,15 @@ function HomePage() {
       : item))
   }
 
-  function selectRecommendationTeam(incidentId, team) {
-    setRecommendations((current) => current.map((item) => item.incidentId === incidentId
-      ? { ...item, recommendedTeam: team, assignmentStatus: 'Suggested' }
-      : item))
-  }
-
-  function assignTeam(incidentId) {
-    const recommendation = recommendations.find((item) => item.incidentId === incidentId)
-    if (recommendation) updateAssignedTeam(incidentId, recommendation.recommendedTeam)
-  }
-
   function navigate(section) {
     setActiveSection(section)
     setShowComplaintForm(false)
     setSuccessMessage('')
+  }
+
+  function requestReportForm() {
+    setSuccessMessage('')
+    setShowReportAccessPrompt(true)
   }
 
   function renderSection() {
@@ -582,13 +487,13 @@ function HomePage() {
       />
     }
     if (activeSection === 'Incident Clusters') {
-      return <IncidentClusters clusters={clusters} complaints={complaints} onViewDetails={openDetails} />
+      return null
     }
-    if (activeSection === 'Issue Map') return <IssueMap complaints={complaints} onViewDetails={openDetails} />
+    if (activeSection === 'Issue Map') return null
     if (activeSection === 'Resource Allocation') {
-      return <ResourceAllocation recommendations={recommendations} onAssign={assignTeam} onTeamSelect={selectRecommendationTeam} />
+      return null
     }
-    if (activeSection === 'Analytics') return <Analytics complaints={complaints} />
+    if (activeSection === 'Analytics') return null
     if (activeSection === 'Settings') return <Settings />
 
     return (
@@ -598,7 +503,7 @@ function HomePage() {
           <PriorityIssues complaints={complaints} onViewDetails={openDetails} onViewAll={() => openComplaints()} />
           <Insights onReview={() => navigate('Analytics')} />
         </div>
-        <IssueMap complaints={complaints} onViewDetails={openDetails} />
+        
         <ComplaintsTable
           complaints={complaints}
           searchQuery={searchQuery}
@@ -619,7 +524,7 @@ function HomePage() {
           activeSection={activeSection}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          onReport={() => { setSuccessMessage(''); setShowComplaintForm(true) }}
+          onReport={requestReportForm}
           notificationsOpen={notificationsOpen}
           onToggleNotifications={() => setNotificationsOpen((value) => !value)}
           notificationCount={notificationCount}
@@ -635,6 +540,7 @@ function HomePage() {
         </main>
       </div>
       {showComplaintForm && <ComplaintForm onSubmit={addComplaint} onCancel={() => setShowComplaintForm(false)} />}
+      {showReportAccessPrompt && <ReportAccessPrompt onClose={() => setShowReportAccessPrompt(false)} />}
     </div>
   )
 }
