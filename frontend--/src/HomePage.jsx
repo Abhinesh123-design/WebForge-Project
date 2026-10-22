@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './HomePage.css'
 import Sidebar from "./Sidebar.jsx"
 import Icon from "./Icon.jsx"
+import Header from "./Header.jsx"
+import ComplaintForm from "./ComplaintForm.jsx"
 import {
   categories,
   complaintStatuses,
@@ -46,58 +48,7 @@ function PriorityBadge({ score }) {
   return <span className={`priority-badge priority-${priorityClass}`}>{label}</span>
 }
 
-function Header({ activeSection, searchQuery, onSearchChange, onReport, notificationsOpen, onToggleNotifications, notificationCount }) {
-  const title = activeSection === 'Incident Details' ? 'Incident details' : activeSection
 
-  return (
-    <header className="topbar">
-      <div className="breadcrumb">
-        <span>Workspace</span>
-        <span className="breadcrumb-separator">/</span>
-        <strong>{title}</strong>
-      </div>
-      <div className="topbar-actions">
-        <label className="global-search">
-          <Icon name="search" size={17} />
-          <span className="visually-hidden">Search complaints and locations</span>
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Search complaints, locations..."
-          />
-          <kbd>⌘ K</kbd>
-        </label>
-        <div className="notification-wrap">
-          <button
-            className="icon-button"
-            type="button"
-            aria-label={`Notifications, ${notificationCount} unread`}
-            aria-expanded={notificationsOpen}
-            onClick={onToggleNotifications}
-          >
-            <Icon name="bell" />
-            {notificationCount > 0 && <span className="notification-dot" />}
-          </button>
-          {notificationsOpen && (
-            <section className="notification-popover">
-              <h2>Notifications</h2>
-              <p>{notificationCount > 0 ? `${notificationCount} new reports are waiting for review.` : 'You are all caught up.'}</p>
-            </section>
-          )}
-        </div>
-        <div className="profile-summary">
-          <span className="avatar" aria-hidden="true">AD</span>
-          <span><strong>Alex Morgan</strong><small>Administrator</small></span>
-        </div>
-        <button className="button button-primary top-report-button" type="button" onClick={onReport}>
-          <Icon name="plus" size={17} />
-          Report new issue
-        </button>
-      </div>
-    </header>
-  )
-}
 
 
 
@@ -211,6 +162,7 @@ function PriorityIssues({ complaints, onViewDetails, onViewAll }) {
 }
 
 function ComplaintsTable({ complaints, searchQuery, filters, onFiltersChange, onViewDetails, onViewAll }) {
+    console.log("table got : " , searchQuery , complaints.length);
   const filteredComplaints = complaints.filter((complaint) => {
     const query = searchQuery.trim().toLowerCase()
     const matchesSearch = !query || [
@@ -299,99 +251,6 @@ function ComplaintsTable({ complaints, searchQuery, filters, onFiltersChange, on
   )
 }
 
-function ComplaintForm({ onSubmit, onCancel }) {
-  const [formError, setFormError] = useState('')
-  const [photo, setPhoto] = useState(null)
-  const [photoUrl, setPhotoUrl] = useState('')
-  const photoUrlRef = useRef('')
-
-  useEffect(() => {
-    return () => {
-      if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current)
-    }
-  }, [])
-
-  function handlePhotoChange(event) {
-    if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current)
-    const nextPhoto = event.target.files?.[0] || null
-    const nextUrl = nextPhoto ? URL.createObjectURL(nextPhoto) : ''
-    photoUrlRef.current = nextUrl
-    setPhoto(nextPhoto)
-    setPhotoUrl(nextUrl)
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const values = {
-      title: String(formData.get('title') || '').trim(),
-      description: String(formData.get('description') || '').trim(),
-      category: String(formData.get('category') || ''),
-      location: String(formData.get('location') || '').trim(),
-      severity: String(formData.get('severity') || ''),
-      imageFileName: photo?.name || '',
-    }
-
-    if (!values.title || !values.description || !values.category || !values.location || !values.severity) {
-      setFormError('Please complete all required fields.')
-      return
-    }
-    onSubmit(values)
-  }
-
-  return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onCancel()
-    }}>
-      <section className="form-modal" role="dialog" aria-modal="true" aria-labelledby="complaint-form-heading">
-        <div className="modal-heading">
-          <div><p className="eyebrow">CIVIC ISSUE INTAKE</p><h2 id="complaint-form-heading">Report a new issue</h2></div>
-          <button className="icon-button" type="button" onClick={onCancel} aria-label="Close report form"><Icon name="close" /></button>
-        </div>
-        <p className="form-intro">Share a few details to help the response team review and prioritize this issue.</p>
-        <form className="complaint-form" onSubmit={handleSubmit}>
-          <label className="form-field form-full">
-            <span>Complaint title <b>*</b></span>
-            <input name="title" required placeholder="e.g. Water leakage near Hostel Block B" />
-          </label>
-          <label className="form-field form-full">
-            <span>Description <b>*</b></span>
-            <textarea name="description" required rows="4" placeholder="Describe what happened and who may be affected..." />
-          </label>
-          <label className="form-field">
-            <span>Category <b>*</b></span>
-            <select name="category" required defaultValue="">
-              <option value="" disabled>Select a category</option>
-              {categories.map((category) => <option key={category} value={category}>{category}</option>)}
-            </select>
-          </label>
-          <label className="form-field">
-            <span>Severity <b>*</b></span>
-            <select name="severity" required defaultValue="">
-              <option value="" disabled>Select severity</option>
-              {Object.keys(severityPriorityScores).map((severity) => <option key={severity} value={severity}>{severity}</option>)}
-            </select>
-          </label>
-          <label className="form-field form-full">
-            <span>Location <b>*</b></span>
-            <input name="location" required placeholder="Street, landmark, or area" />
-          </label>
-          <label className="form-field form-full">
-            <span>Photo <small>Optional</small></span>
-            <input name="image" type="file" accept="image/*" onChange={handlePhotoChange} />
-            {photoUrl && <img className="photo-preview" src={photoUrl} alt="Selected complaint attachment preview" />}
-            <small>Photo preview stays in your browser and is not uploaded.</small>
-          </label>
-          {formError && <p className="form-error" role="alert">{formError}</p>}
-          <div className="modal-actions form-full">
-            <button className="button button-secondary" type="button" onClick={onCancel}>Cancel</button>
-            <button className="button button-primary" type="submit"><Icon name="plus" size={17} /> Submit complaint</button>
-          </div>
-        </form>
-      </section>
-    </div>
-  )
-}
 
 function IncidentDetails({ complaint, complaints, clusters, onStatusChange, onTeamChange, onBack }) {
   if (!complaint) {
