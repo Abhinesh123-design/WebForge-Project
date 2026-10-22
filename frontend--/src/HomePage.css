@@ -1076,11 +1076,14 @@ textarea:focus-visible {
   font-size: 11px;
 }
 
+
 .map-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(230px, .75fr);
-  gap: 15px;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+  gap: 20px;
+  align-items: stretch;
 }
+
 
 .map-placeholder {
   position: relative;
@@ -2163,20 +2166,40 @@ textarea:focus-visible {
   }
 }
 /* Complaint status badges */
+
 .status-pending {
   background: #fef3c7;
   color: #92400e;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
 }
 
 .status-in-progress {
   background: #dbeafe;
   color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
 }
 
 .status-resolved {
   background: #d1fae5;
   color: #065f46;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
 }
+
 
 /* Dashboard card hover effect */
 .metric-card {
@@ -2202,3 +2225,30 @@ textarea:focus-visible {
     gap: 12px;
   }
 }
+/* Better keyboard accessibility for dashboard cards */
+.metric-card:focus-visible {
+  outline: 2px solid #087f77;
+  outline-offset: 3px;
+}
+
+/* Smooth hover effect */
+.metric-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .metric-card {
+    transition: none;
+  }
+
+  .metric-card:hover {
+    transform: none;
+  }
+}
+
